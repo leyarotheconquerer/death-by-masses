@@ -11,11 +11,23 @@ class Game extends Phaser.Scene {
 	preload() {
 		this.map = new Map(this);
 		this.player = new Robot(this, 'player', 400, 300);
+		this.other = new Robot(this, 'other', 500, 400);
 	}
 
 	create() {
+		let groups = {
+			robots: {
+				walk: this.physics.add.group(),
+				hit: this.physics.add.group()
+			}
+		};
+		let robots = this.physics.add.group();
+		let robotHit = this.physics.add.group();
 		this.map.create();
-		this.player.create();
+		this.player.create(groups.robots);
+		this.other.create(groups.robots);
+
+		this.physics.add.collider(groups.robots.walk, groups.robots.walk);
 
 		this.input.setPollAlways();
 		this.input.on('pointerdown', (pointer) => {
@@ -35,6 +47,7 @@ class Game extends Phaser.Scene {
 
 	update(time, delta) {
 		this.player.update(delta);
+		this.other.update(delta);
 	}
 }
 

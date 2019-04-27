@@ -31,7 +31,8 @@ class Robot {
 	constructor(scene, name, x, y) {
 		this.scene = scene;
 		this.sprite;
-		this.name;
+		this.name = name;
+		this.moving = false;
 		this.target = {x, y};
 
 		this.preload();
@@ -44,7 +45,7 @@ class Robot {
 		}
 	}
 
-	create() {
+	create(groups) {
 		this.scene.anims.create({
 			key: 'playerwalk',
 			frames: this.images().map(image => ({ key: image.name })),
@@ -52,29 +53,44 @@ class Robot {
 			repeat: Phaser.FOREVER
 		});
 
-		this.sprite = this.scene.add
+		this.sprite = this.scene.physics.add
 			.sprite(this.target.x, this.target.y, this.name)
 			.play('playerwalk');
 		this.sprite.scaleX = 0.5;
 		this.sprite.scaleY = 0.5;
+		this.sprite.setCircle(40, 84, 140);
+
+		this.hitSprite = this.scene.physics.add
+			.sprite(this.target.x, this.target.y, `${this.name}-hit`);
+		this.hitSprite.setAlpha(0);
+		this.hitSprite.setSize(60, 90);
+
+		groups.walk.add(this.sprite);
+		groups.hit.add(this.hitSprite);
+
+		this.sprite.setDrag(1000, 1000);
 	}
 
 	update(delta) {
-		const speed = 40;
-		const sleep = 2;
-		let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
-		let distance = position.distance(this.target);
-		if (distance > sleep) {
-			let intermediate = position.lerp(
-				this.target,
-				speed / (delta * distance)
-			);
-			this.sprite.setPosition(intermediate.x, intermediate.y);
+		const speed = 300;
+		const sleep = 100;
+		this.hitSprite.setPosition(this.sprite.x, this.sprite.y);
+		if (this.moving) {
+			let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
+			let distance = position.distanceSq(this.target);
+			if (distance > sleep) {
+				this.scene.physics.moveToObject(this.sprite, this.target, speed);
+			}
+			else {
+				this.moving = false;
+				this.sprite.setVelocity(0,0);
+			}
 		}
 	}
 
 	moveToward(target) {
 		this.target = target;
+		this.moving = true;
 	}
 };
 
