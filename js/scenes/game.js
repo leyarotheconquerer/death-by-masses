@@ -31,19 +31,25 @@ class Game extends Phaser.Scene {
 			0.1, 0.1,
 			0, 0
 		);
+		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 
 		this.physics.add.collider(groups.robots.walk, groups.robots.walk);
 
 		this.input.setPollAlways();
 		this.input.on('pointerdown', (pointer) => {
-			this.player.moveToward(
-				this.cameras.main.getWorldPoint(pointer.x, pointer.y)
-			);
-			this.input.on('pointermove', (pointe) => {
+			if (pointer.buttons == 1) {
 				this.player.moveToward(
 					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
 				);
-			});
+				this.input.on('pointermove', (pointe) => {
+					this.player.moveToward(
+						this.cameras.main.getWorldPoint(pointer.x, pointer.y)
+					);
+				});
+			}
+			else if (pointer.buttons == 2) {
+				console.log("Attack!");
+			}
 		}, this);
 		this.input.on('pointerup', (pointer) => {
 			this.input.off('pointermove');
