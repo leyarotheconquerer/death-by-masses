@@ -1,3 +1,5 @@
+import Game from './scenes/game.js';
+
 const app = {
 	game: null,
 	start: () => new Phaser.Game({
@@ -11,10 +13,7 @@ const app = {
 				gravity: { y: 0 },
 			}
 		},
-		scene: {
-			preload: function() {},
-			create: function() {}
-		}
+		scene: [ Game ]
 	})
 };
 
