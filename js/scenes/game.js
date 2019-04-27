@@ -1,19 +1,20 @@
 import Map from '../objects/map.js';
-import Player from '../objects/player.js';
+import Robot from '../objects/robot.js';
 
 class Game extends Phaser.Scene {
 	constructor() {
 		super({ key: 'game' });
 		this.map;
+		this.player;
 	}
 
 	preload() {
-		Map.load(this.load);
-		this.player = new Player(this);
+		this.map = new Map(this);
+		this.player = new Robot(this, 'player', 400, 300);
 	}
 
 	create() {
-		this.map = Map.create(this.make);
+		this.map.create();
 		this.player.create();
 	}
 

@@ -1,16 +1,22 @@
-export default {
-	load: (load) => {
-		load.image('tiles', 'images/Tiles.png');
-		load.tilemapTiledJSON('testmap', 'maps/TestMap.json');
-	},
-	create: (make) => {
-		let map = make.tilemap({
+class Map {
+	constructor(scene) {
+		scene.load.image('tiles', 'images/Tiles.png');
+		scene.load.tilemapTiledJSON('testmap', 'maps/TestMap.json');
+		this.scene = scene;
+		this.map;
+		this.tiles;
+		this.groundLayer;
+	}
+
+	create() {
+		this.map = this.scene.make.tilemap({
 			key: 'testmap'
 		});
-		let tiles = map.addTilesetImage('Tiles', 'tiles');
-		let layer = map.createStaticLayer(0, tiles);
-		layer.scaleX = 0.25;
-		layer.scaleY = 0.25;
-		return { map, tiles, layer };
+		this.tiles = this.map.addTilesetImage('Tiles', 'tiles');
+		this.groundLayer = this.map.createStaticLayer(0, this.tiles);
+		this.groundLayer.scaleX = 0.25;
+		this.groundLayer.scaleY = 0.25;
 	}
 };
+
+export default Map;
