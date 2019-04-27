@@ -41,14 +41,16 @@ class Game extends Phaser.Scene {
 				this.player.moveToward(
 					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
 				);
-				this.input.on('pointermove', (pointe) => {
+				this.input.on('pointermove', (pointer) => {
 					this.player.moveToward(
 						this.cameras.main.getWorldPoint(pointer.x, pointer.y)
 					);
 				});
 			}
 			else if (pointer.buttons == 2) {
-				console.log("Attack!");
+				this.player.attack(
+					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
+				);
 			}
 		}, this);
 		this.input.on('pointerup', (pointer) => {
