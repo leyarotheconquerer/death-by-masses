@@ -28,13 +28,20 @@ class Robot {
 		];
 	}
 
-	constructor(scene) {
+	constructor(scene, name, x, y) {
 		this.scene = scene;
+		this.sprite;
+		this.name;
+		this.target = {x, y};
+
+		this.preload();
+	}
+
+	preload() {
 		for (let index in this.images()) {
 			let image = this.images()[index];
 			this.scene.load.image(image.name, `images/robot/${image.file}`);
 		}
-		this.sprite;
 	}
 
 	create() {
@@ -45,9 +52,29 @@ class Robot {
 			repeat: Phaser.FOREVER
 		});
 
-		this.sprite = this.scene.add.sprite(400, 300, 'player').play('playerwalk');
+		this.sprite = this.scene.add
+			.sprite(this.target.x, this.target.y, this.name)
+			.play('playerwalk');
 		this.sprite.scaleX = 0.5;
 		this.sprite.scaleY = 0.5;
+	}
+
+	update(delta) {
+		const speed = 40;
+		const sleep = 2;
+		let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
+		let distance = position.distance(this.target);
+		if (distance > sleep) {
+			let intermediate = position.lerp(
+				this.target,
+				speed / (delta * distance)
+			);
+			this.sprite.setPosition(intermediate.x, intermediate.y);
+		}
+	}
+
+	moveToward(target) {
+		this.target = target;
 	}
 };
 

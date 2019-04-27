@@ -16,9 +16,25 @@ class Game extends Phaser.Scene {
 	create() {
 		this.map.create();
 		this.player.create();
+
+		this.input.setPollAlways();
+		this.input.on('pointerdown', (pointer) => {
+			this.player.moveToward(
+				this.cameras.main.getWorldPoint(pointer.x, pointer.y)
+			);
+			this.input.on('pointermove', (pointe) => {
+				this.player.moveToward(
+					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
+				);
+			});
+		}, this);
+		this.input.on('pointerup', (pointer) => {
+			this.input.off('pointermove');
+		});
 	}
 
-	update() {
+	update(time, delta) {
+		this.player.update(delta);
 	}
 }
 
