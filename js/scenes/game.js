@@ -1,3 +1,6 @@
+import Map from '../objects/map.js';
+import Player from '../objects/player.js';
+
 class Game extends Phaser.Scene {
 	constructor() {
 		super({ key: 'game' });
@@ -5,19 +8,13 @@ class Game extends Phaser.Scene {
 	}
 
 	preload() {
-		console.log('Loading');
-		this.load.image('tiles', 'images/Tiles.png');
-		this.load.tilemapTiledJSON('testmap', 'maps/TestMap.json');
+		Map.load(this.load);
+		this.player = new Player(this);
 	}
 
 	create() {
-		this.map = this.make.tilemap({
-			key: 'testmap'
-		});
-		let tiles = this.map.addTilesetImage('Tiles', 'tiles');
-		let layer = this.map.createStaticLayer(0, tiles, 0, 0);
-		layer.scaleX = 0.25;
-		layer.scaleY = 0.25;
+		this.map = Map.create(this.make);
+		this.player.create();
 	}
 
 	update() {
