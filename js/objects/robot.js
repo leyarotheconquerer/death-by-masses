@@ -88,6 +88,10 @@ class Robot {
 		}
 	}
 
+	getObject() {
+		return this.sprite;
+	}
+
 	moveToward(target) {
 		this.target = target;
 		this.moving = true;

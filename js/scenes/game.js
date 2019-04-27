@@ -21,11 +21,16 @@ class Game extends Phaser.Scene {
 				hit: this.physics.add.group()
 			}
 		};
-		let robots = this.physics.add.group();
-		let robotHit = this.physics.add.group();
 		this.map.create();
 		this.player.create(groups.robots);
 		this.other.create(groups.robots);
+
+		this.cameras.main.startFollow(
+			this.player.getObject(),
+			false,
+			0.1, 0.1,
+			0, 0
+		);
 
 		this.physics.add.collider(groups.robots.walk, groups.robots.walk);
 
