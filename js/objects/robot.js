@@ -1,6 +1,8 @@
 import Attack from './attack.js';
 import Health from '../components/health.js';
 import Weapon from '../components/weapon.js';
+import Player from '../components/player.js';
+import AiMelee from '../components/aimelee.js';
 
 class Robot {
 	constructor(scene, position, groups, config) {
@@ -9,6 +11,7 @@ class Robot {
 
 		this.moving = false;
 		this.target = position;
+		this.controller = this.setController(config.controller, groups.target);
 
 		for (let key in config.animations) {
 			this.scene.anims.create({
@@ -87,6 +90,18 @@ class Robot {
 		return hitbox;
 	}
 
+	setController(type, targetGroups) {
+		return {
+			player: () => new Player(
+				this.scene.input,
+				this.scene.cameras.main,
+				this,
+				targetGroups
+			),
+			aimelee: () => new AiMelee(this, targetGroups)
+		}[type]();
+	}
+
 	update(delta) {
 		if (!this.destroyed) {
 			const speed = 300;
@@ -104,6 +119,7 @@ class Robot {
 					this.sprite.setVelocity(0,0);
 				}
 			}
+			this.controller.update();
 			this.weapon.update();
 			this.health.update({ x: this.sprite.x, y: this.sprite.y });
 		}
@@ -119,8 +135,17 @@ class Robot {
 		return this.destroyed;
 	}
 
+	removeFromGroups(groups) {
+		groups.walk.remove(this.sprite);
+		groups.hit.remove(this.hitSprite);
+	}
+
 	getObject() {
 		return this.sprite;
+	}
+
+	getController() {
+		return this.controller;
 	}
 
 	attack(target, groups) {

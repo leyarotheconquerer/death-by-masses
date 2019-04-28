@@ -17,8 +17,13 @@ class Game extends Phaser.Scene {
 
 	create() {
 		this.groups = {
+			player: {
+				hit: this.physics.add.group()
+			},
 			robots: {
 				walk: this.physics.add.group(),
+			},
+			enemies: {
 				hit: this.physics.add.group()
 			},
 			attacks: this.physics.add.group()
@@ -26,10 +31,15 @@ class Game extends Phaser.Scene {
 		this.map = new Map(this);
 		this.player = new Robot(this,
 			this.map.playerSpawn(),
-			this.groups.robots,
+			{
+				walk: this.groups.robots.walk,
+				hit: this.groups.player.hit,
+				target: [ this.groups.enemies.hit ]
+			},
 			{
 				...Level1Melee.config,
 				name: 'player-level1melee',
+				controller: 'player'
 			}
 		);
 		let otherSpawns = this.map.level1meleeSpawns();
@@ -39,10 +49,15 @@ class Game extends Phaser.Scene {
 				...this.level1melee,
 				new Robot(this,
 					otherSpawns[index],
-					this.groups.robots,
+					{
+						walk: this.groups.robots.walk,
+						hit: this.groups.enemies.hit,
+						target: [ this.groups.player.hit ]
+					},
 					{
 						...Level1Melee.config,
 						name: 'other-level1melee',
+						controller: 'aimelee'
 					}
 				)
 			];
@@ -57,32 +72,6 @@ class Game extends Phaser.Scene {
 		);
 
 		this.physics.add.collider(this.groups.robots.walk, this.groups.robots.walk);
-		this.setupInput();
-	}
-
-	setupInput() {
-		this.input.setPollAlways();
-		this.input.on('pointerdown', (pointer) => {
-			if (pointer.buttons == 1) {
-				this.player.moveToward(
-					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
-				);
-				this.input.on('pointermove', (pointer) => {
-					this.player.moveToward(
-						this.cameras.main.getWorldPoint(pointer.x, pointer.y)
-					);
-				});
-			}
-			else if (pointer.buttons == 2) {
-				this.player.attack(
-					this.cameras.main.getWorldPoint(pointer.x, pointer.y),
-					[ this.groups.robots.hit ]
-				);
-			}
-		}, this);
-		this.input.on('pointerup', (pointer) => {
-			this.input.off('pointermove');
-		});
 	}
 
 	update(time, delta) {
