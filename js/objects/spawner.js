@@ -45,6 +45,15 @@ class Spawner {
 		return {
 			level1melee: {
 				...Level1Melee.config,
+				...(player ? {
+					health: {
+						total: 20
+					},
+					weapon: {
+						...Level1Melee.config.weapon,
+						damage: 2
+					}
+				} : {}),
 				name: `${player ? 'player' : 'other'}-level1melee`,
 				controller: (player ?
 					Level1Melee.playerConfig :

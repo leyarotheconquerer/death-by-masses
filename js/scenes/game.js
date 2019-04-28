@@ -43,8 +43,8 @@ class Game extends Phaser.Scene {
 		let levels = [	
 			{
 				robot: 'level1melee',
-				level: 5,
-				spawns: [ 1, 1, 2 ]
+				level: 11,
+				spawns: [ 1, 1, 1, 2, 2 ]
 			},
 			{
 				robot: 'level1melee',
