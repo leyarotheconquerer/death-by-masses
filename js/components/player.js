@@ -29,6 +29,9 @@ class Player {
 
 	update() {
 	}
+
+	destroy() {
+	}
 };
 
 export default Player;

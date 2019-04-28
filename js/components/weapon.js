@@ -50,6 +50,12 @@ class Weapon {
 		}
 	}
 
+	destroy() {
+		if (this.currentAttack) {
+			this.currentAttack.destroy();
+		}
+	}
+
 	attack(direction, myHealth, groups) {
 		if (this.currentAttack) {
 			this.currentAttack.destroy();

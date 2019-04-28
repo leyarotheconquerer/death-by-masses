@@ -11,7 +11,6 @@ class Robot {
 
 		this.moving = false;
 		this.target = position;
-		this.controller = this.setController(config.controller, groups.target);
 
 		for (let key in config.animations) {
 			this.scene.anims.create({
@@ -49,6 +48,7 @@ class Robot {
 			config.weapon.animation,
 			config.weapon.start, config.weapon.end
 		);
+		this.controller = this.setController(config.controller, groups.target);
 	}
 
 	createSprite(config, animations, target, name) {
@@ -90,7 +90,7 @@ class Robot {
 		return hitbox;
 	}
 
-	setController(type, targetGroups) {
+	setController(config, targetGroups) {
 		return {
 			player: () => new Player(
 				this.scene.input,
@@ -98,8 +98,12 @@ class Robot {
 				this,
 				targetGroups
 			),
-			aimelee: () => new AiMelee(this, targetGroups)
-		}[type]();
+			aimelee: () => new AiMelee(
+				config,
+				this.sprite, this,
+				targetGroups
+			)
+		}[config.type]();
 	}
 
 	update(delta) {
@@ -128,16 +132,13 @@ class Robot {
 	destroy() {
 		this.sprite.destroy();
 		this.hitSprite.destroy();
+		this.weapon.destroy();
+		this.controller.destroy();
 		this.destroyed = true;
 	}
 
 	dead() {
 		return this.destroyed;
-	}
-
-	removeFromGroups(groups) {
-		groups.walk.remove(this.sprite);
-		groups.hit.remove(this.hitSprite);
 	}
 
 	getObject() {

@@ -39,7 +39,7 @@ class Game extends Phaser.Scene {
 			{
 				...Level1Melee.config,
 				name: 'player-level1melee',
-				controller: 'player'
+				controller: Level1Melee.playerConfig
 			}
 		);
 		let otherSpawns = this.map.level1meleeSpawns();
@@ -57,7 +57,7 @@ class Game extends Phaser.Scene {
 					{
 						...Level1Melee.config,
 						name: 'other-level1melee',
-						controller: 'aimelee'
+						controller: Level1Melee.aiConfig
 					}
 				)
 			];

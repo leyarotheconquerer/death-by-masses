@@ -54,6 +54,7 @@ Level1Melee.images = {
 		{ name: "playerattack23", file: "attack/frame0023.png" }
 	]
 };
+
 Level1Melee.config = {
 	name: 'level1-melee',
 	health: {
@@ -89,6 +90,23 @@ Level1Melee.config = {
 			frames: Level1Melee.images.attack.map(image => ({ key: image.name })),
 			repeat: 0
 		},
+	}
+};
+
+Level1Melee.playerConfig = {
+	type: 'player'
+};
+
+Level1Melee.aiConfig = {
+	type: 'aimelee',
+	detect: {
+		radius: 250,
+		offset: { x: -230, y: -210 },
+		rate: 0.2
+	},
+	attack: {
+		radius: 80,
+		rate: 0.5
 	}
 };
 
