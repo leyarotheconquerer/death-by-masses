@@ -58,6 +58,7 @@ class Robot {
 		const speed = 300;
 		const sleep = 100;
 		this.hitSprite.setPosition(this.sprite.x, this.sprite.y);
+		this.sprite.depth = this.sprite.y;
 		if (this.moving) {
 			let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
 			let distance = position.distanceSq(this.target);
