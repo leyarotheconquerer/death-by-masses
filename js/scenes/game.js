@@ -10,6 +10,7 @@ class Game extends Phaser.Scene {
 
 	preload() {
 		this.map = new Map(this);
+		Robot.preload(this);
 		this.player = new Robot(this, 'player', 400, 300);
 		this.other = new Robot(this, 'other', 500, 400);
 	}
@@ -34,7 +35,6 @@ class Game extends Phaser.Scene {
 		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 
 		this.physics.add.collider(groups.robots.walk, groups.robots.walk);
-
 		this.input.setPollAlways();
 		this.input.on('pointerdown', (pointer) => {
 			if (pointer.buttons == 1) {
