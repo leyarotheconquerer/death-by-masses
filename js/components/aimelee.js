@@ -8,7 +8,7 @@ class AiMelee {
 		this.detected = Date.now();
 		this.lastAttack = Date.now();
 		this.attackTarget = null;
-		this.preferredRadius = Math.random() * this.config.detect.Radius / 2;
+		this.preferredRadius = Math.random() * this.config.detect.radius / 2;
 
 		this.detectSprite = this.robotSprite.scene.physics.add
 			.sprite(this.robotSprite.x, this.robotSprite.y, null);
@@ -54,7 +54,7 @@ class AiMelee {
 			}
 		}
 		else if (this.follow != null) {
-			this.follow();
+			this.followTarget();
 		}
 	}
 
@@ -70,10 +70,10 @@ class AiMelee {
 		this.robot.moveToward({ x: this.attackTarget.x, y: this.attackTarget.y });
 	}
 
-	follow() {
+	followTarget() {
 		let distance = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
-			.distance({ x: this.follow.x, y: this.follow.y })
-			- this.config.detect.radius
+			.distance({ x: this.follow.x, y: this.follow.y });
+		distance = distance - this.config.detect.radius
 			+ this.preferredRadius;
 		let target = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
 			.negate()

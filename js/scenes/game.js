@@ -2,6 +2,7 @@ import Map from '../objects/map.js';
 import Robot from '../objects/robot.js';
 import Level1Melee from '../objects/robots/level1melee.js';
 import Score from '../objects/score.js';
+import Spawner from '../objects/spawner.js';
 import Hud from './hud.js';
 
 class Game extends Phaser.Scene {
@@ -51,44 +52,49 @@ class Game extends Phaser.Scene {
 			}
 		];
 		this.score = new Score(levels,
-			(level, type) => console.log('spawn', level, type),
+			(level, type) => {
+				console.log('spawn', level, type);
+				this.allies = [
+					...this.allies,
+					this.spawner.spawnAlly(type,
+						this.player.getObject(),
+						{
+							walk: this.groups.robots.walk,
+							hit: this.groups.allies.hit,
+							target: [ this.groups.enemies.hit ]
+						},
+						() => console.log("An ally has died")
+					)
+				];
+			},
 			(level, type) => console.log('level', level, type)
 		);
+		this.spawner = new Spawner(this);
 		this.map = new Map(this);
-		this.player = new Robot(this,
+		this.player = this.spawner.spawnPlayer(
+			'level1melee',
 			this.map.playerSpawn(),
-			null,
 			{
 				walk: this.groups.robots.walk,
 				hit: this.groups.player.hit,
 				target: [ this.groups.enemies.hit ]
 			},
-			() => console.log("You lose"),
-			{
-				...Level1Melee.config,
-				name: 'player-level1melee',
-				controller: Level1Melee.playerConfig
-			}
-		);
+			() => console.log("You lose"));
 		let otherSpawns = this.map.level1meleeSpawns();
 		this.level1melee = [];
+		this.allies = [];
 		for(let index in otherSpawns) {
 			this.level1melee = [
 				...this.level1melee,
-				new Robot(this,
-					otherSpawns[index],
-					null,
+				this.spawner.spawnEnemy(
+					'level1melee',
+					[otherSpawns[index]],
 					{
 						walk: this.groups.robots.walk,
 						hit: this.groups.enemies.hit,
-						target: [ this.groups.player.hit ]
+						target: [ this.groups.player.hit, this.groups.allies.hit ]
 					},
-					() => { this.score.addKill(); },
-					{
-						...Level1Melee.config,
-						name: 'other-level1melee',
-						controller: Level1Melee.aiConfig
-					}
+					() => { this.score.addKill(); }
 				)
 			];
 		}
@@ -110,6 +116,10 @@ class Game extends Phaser.Scene {
 			this.level1melee[index].update(delta);
 		}
 		this.level1melee = this.level1melee.filter(robot => !robot.dead());
+		for(let index in this.allies) {
+			this.allies[index].update(delta);
+		}
+		this.allies = this.allies.filter(robot => !robot.dead());
 		if (this.hud.score) {
 			this.hud.score.kills(this.score.getStats());
 			this.hud.score.health(
