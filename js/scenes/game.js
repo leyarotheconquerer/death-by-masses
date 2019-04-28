@@ -9,33 +9,35 @@ class Game extends Phaser.Scene {
 	}
 
 	preload() {
-		this.map = new Map(this);
+		Map.preload(this);
 		Robot.preload(this);
-		this.player = new Robot(this, 'player', 400, 300);
-		this.other = new Robot(this, 'other', 500, 400);
 	}
 
 	create() {
-		let groups = {
+		this.groups = {
 			robots: {
 				walk: this.physics.add.group(),
 				hit: this.physics.add.group()
 			},
 			attacks: this.physics.add.group()
 		};
-		this.map.create();
-		this.player.create(groups.robots);
-		this.other.create(groups.robots);
+		this.map = new Map(this);
+		this.player = new Robot(this, 'player', 400, 300, this.groups.robots);
+		this.other = new Robot(this, 'other', 500, 400, this.groups.robots);
 
+		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 		this.cameras.main.startFollow(
 			this.player.getObject(),
 			false,
 			0.1, 0.1,
 			0, 0
 		);
-		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 
-		this.physics.add.collider(groups.robots.walk, groups.robots.walk);
+		this.physics.add.collider(this.groups.robots.walk, this.groups.robots.walk);
+		this.setupInput();
+	}
+
+	setupInput() {
 		this.input.setPollAlways();
 		this.input.on('pointerdown', (pointer) => {
 			if (pointer.buttons == 1) {
@@ -51,7 +53,7 @@ class Game extends Phaser.Scene {
 			else if (pointer.buttons == 2) {
 				this.player.attack(
 					this.cameras.main.getWorldPoint(pointer.x, pointer.y),
-					[ groups.robots.hit ]
+					[ this.groups.robots.hit ]
 				);
 			}
 		}, this);

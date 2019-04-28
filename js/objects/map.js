@@ -1,14 +1,10 @@
 class Map {
 	constructor(scene) {
-		scene.load.image('tiles', 'images/Tiles.png');
-		scene.load.tilemapTiledJSON('testmap', 'maps/TestMap.json');
 		this.scene = scene;
 		this.map;
 		this.tiles;
 		this.groundLayer;
-	}
 
-	create() {
 		this.map = this.scene.make.tilemap({
 			key: 'testmap'
 		});
@@ -17,6 +13,11 @@ class Map {
 		this.groundLayer.scaleX = 0.25;
 		this.groundLayer.scaleY = 0.25;
 	}
+};
+
+Map.preload = (scene) => {
+	scene.load.image('tiles', 'images/Tiles.png');
+	scene.load.tilemapTiledJSON('testmap', 'maps/TestMap.json');
 };
 
 export default Map;

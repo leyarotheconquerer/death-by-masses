@@ -1,17 +1,16 @@
 import Attack from './attack.js';
 
 class Robot {
-	constructor(scene, name, x, y) {
+	constructor(scene, name, x, y, groups) {
 		this.scene = scene;
+		this.name = name;
+
 		this.sprite;
 		this.hitSprite;
 		this.currentAttack = null;
-		this.name = name;
 		this.moving = false;
 		this.target = {x, y};
-	}
 
-	create(groups) {
 		this.scene.anims.create({
 			key: 'playerwalk',
 			frames: Robot.images.walk.map(image => ({ key: image.name })),
