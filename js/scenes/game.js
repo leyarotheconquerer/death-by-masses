@@ -1,5 +1,6 @@
 import Map from '../objects/map.js';
 import Robot from '../objects/robot.js';
+import Level1Melee from '../objects/robots/level1melee.js';
 
 class Game extends Phaser.Scene {
 	constructor() {
@@ -10,6 +11,7 @@ class Game extends Phaser.Scene {
 
 	preload() {
 		Map.preload(this);
+		Level1Melee.preload(this);
 		Robot.preload(this);
 	}
 
@@ -22,8 +24,22 @@ class Game extends Phaser.Scene {
 			attacks: this.physics.add.group()
 		};
 		this.map = new Map(this);
-		this.player = new Robot(this, 'player', 400, 300, this.groups.robots);
-		this.other = new Robot(this, 'other', 500, 400, this.groups.robots);
+		this.player = new Robot(this,
+			{x: 400, y: 300},
+			this.groups.robots,
+			{
+				...Level1Melee.config,
+				name: 'player-level1melee',
+			}
+		);
+		this.other = new Robot(this,
+			{x: 500, y: 400},
+			this.groups.robots,
+			{
+				...Level1Melee.config,
+				name: 'other-level1melee',
+			}
+		);
 
 		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 		this.cameras.main.startFollow(

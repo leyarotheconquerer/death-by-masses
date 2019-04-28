@@ -3,51 +3,12 @@ import Health from '../components/health.js';
 import Weapon from '../components/weapon.js';
 
 class Robot {
-	constructor(scene, name, x, y, groups) {
-		const config = {
-			name: name,
-			position: { x, y },
-			groups: groups,
-			health: {
-				total: 10
-			},
-			weapon: {
-				animation: 'playerattack',
-				start: 0.2,
-				end: 0.6,
-				damage: 1
-			},
-			sprite: {
-				idle: 'playerwalk',
-				walk: 'playerwalk',
-				scale: { x: 0.5, y: 0.5 },
-				circle: {
-					radius: 40,
-					offset: { x: 84, y: 140 }
-				}
-			},
-			hitbox: {
-				size: { w: 60, h: 90 },
-				offset: { x: -14, y: -30 }
-			},
-			animations: {
-				playerwalk: {
-					frameRate: 24,
-					frames: Robot.images.walk.map(image => ({ key: image.name })),
-					repeat: Phaser.FOREVER
-				},
-				playerattack: {
-					frameRate: 24,
-					frames: Robot.images.attack.map(image => ({ key: image.name })),
-					repeat: 0
-				},
-			}
-		};
+	constructor(scene, position, groups, config) {
 		this.scene = scene;
-		this.name = name;
+		this.name = config.name;
 
 		this.moving = false;
-		this.target = config.position;
+		this.target = position;
 
 		for (let key in config.animations) {
 			this.scene.anims.create({
@@ -56,10 +17,14 @@ class Robot {
 			});
 		}
 
-		this.health = new Health(config.health.total, () => {
-			console.log("I'm dead says", this.name);
-			this.destroy();
-		});
+		this.health = new Health(this.scene,
+			this.target, { x: 0, y: -60 },
+			config.health.total,
+			() => {
+				console.log("I'm dead says", this.name);
+				this.destroy();
+			}
+		);
 		this.sprite = this.createSprite(
 			config.sprite,
 			config.animations,
@@ -71,8 +36,8 @@ class Robot {
 			this.target, this.name
 		);
 
-		config.groups.walk.add(this.sprite);
-		config.groups.hit.add(this.hitSprite);
+		groups.walk.add(this.sprite);
+		groups.hit.add(this.hitSprite);
 		this.sprite.setDrag(1000, 1000);
 		this.weapon = new Weapon(
 			this.scene, this.sprite,
@@ -140,6 +105,7 @@ class Robot {
 				}
 			}
 			this.weapon.update();
+			this.health.update({ x: this.sprite.x, y: this.sprite.y });
 		}
 	}
 
