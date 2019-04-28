@@ -1,7 +1,9 @@
 class Score {
 	constructor(scene) {
 		this.scene = scene;
+		this.previousKill = '';
 		this.killGroup = null;
+		this.previousRemaining = '';
 		this.remainingGroup = null;
 		this.healthBar = null;
 		this.healthLabel = null;
@@ -16,6 +18,9 @@ class Score {
 	}
 
 	remaining(counts) {
+		// TODO: Something better than string "hashing"
+		if (this.previousRemaining == JSON.stringify(counts)) { return; };
+		this.previousRemaining = JSON.stringify(counts);
 		if (this.remainingGroup) {
 			this.remainingGroup.destroy(true);
 		}
@@ -40,12 +45,15 @@ class Score {
 	}
 
 	kills(counts) {
+		// TODO: Something better than string "hashing"
+		if (this.previousKill == JSON.stringify(counts)) { return; };
+		this.previousKill = JSON.stringify(counts);
 		if (this.killGroup) {
 			this.killGroup.destroy(true);
 		}
 		this.killGroup = this.scene.add.group();
 		let background = this.scene.add.rectangle(795, 5,
-			200, 25 * 4 + 10,
+			200, 110,
 			0x333333, 0.7
 		);
 		background.setOrigin(1, 0);

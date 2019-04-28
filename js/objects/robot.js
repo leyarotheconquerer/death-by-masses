@@ -5,12 +5,13 @@ import Player from '../components/player.js';
 import AiMelee from '../components/aimelee.js';
 
 class Robot {
-	constructor(scene, position, follow, groups, config) {
+	constructor(scene, position, follow, groups, deathCallback, config) {
 		this.scene = scene;
 		this.name = config.name;
 
 		this.moving = false;
 		this.target = position;
+		this.deathCallback = deathCallback;
 
 		for (let key in config.animations) {
 			this.scene.anims.create({
@@ -24,6 +25,7 @@ class Robot {
 			config.health.total,
 			() => {
 				console.log("I'm dead says", this.name);
+				this.deathCallback();
 				this.destroy();
 			}
 		);

@@ -1,6 +1,7 @@
 import Map from '../objects/map.js';
 import Robot from '../objects/robot.js';
 import Level1Melee from '../objects/robots/level1melee.js';
+import Score from '../objects/score.js';
 import Hud from './hud.js';
 
 class Game extends Phaser.Scene {
@@ -29,11 +30,30 @@ class Game extends Phaser.Scene {
 			robots: {
 				walk: this.physics.add.group(),
 			},
+			allies: {
+				hit: this.physics.add.group()
+			},
 			enemies: {
 				hit: this.physics.add.group()
 			},
 			attacks: this.physics.add.group()
 		};
+		let levels = [	
+			{
+				robot: 'level1melee',
+				level: 5,
+				spawns: [ 1, 1, 2 ]
+			},
+			{
+				robot: 'level1melee',
+				level: 8,
+				spawns: [ 2, 2, 3 ]
+			}
+		];
+		this.score = new Score(levels,
+			(level, type) => console.log('spawn', level, type),
+			(level, type) => console.log('level', level, type)
+		);
 		this.map = new Map(this);
 		this.player = new Robot(this,
 			this.map.playerSpawn(),
@@ -43,6 +63,7 @@ class Game extends Phaser.Scene {
 				hit: this.groups.player.hit,
 				target: [ this.groups.enemies.hit ]
 			},
+			() => console.log("You lose"),
 			{
 				...Level1Melee.config,
 				name: 'player-level1melee',
@@ -62,6 +83,7 @@ class Game extends Phaser.Scene {
 						hit: this.groups.enemies.hit,
 						target: [ this.groups.player.hit ]
 					},
+					() => { this.score.addKill(); },
 					{
 						...Level1Melee.config,
 						name: 'other-level1melee',
@@ -89,6 +111,7 @@ class Game extends Phaser.Scene {
 		}
 		this.level1melee = this.level1melee.filter(robot => !robot.dead());
 		if (this.hud.score) {
+			this.hud.score.kills(this.score.getStats());
 			this.hud.score.health(
 				this.player.health.get(),
 				this.player.health.total()
