@@ -1,8 +1,11 @@
+import Attack from './attack.js';
 
 class Robot {
 	constructor(scene, name, x, y) {
 		this.scene = scene;
 		this.sprite;
+		this.hitSprite;
+		this.currentAttack = null;
 		this.name = name;
 		this.moving = false;
 		this.target = {x, y};
@@ -33,6 +36,9 @@ class Robot {
 			.sprite(this.target.x, this.target.y, `${this.name}-hit`);
 		this.hitSprite.setAlpha(0);
 		this.hitSprite.setSize(60, 90);
+		this.hitSprite.setDataEnabled();
+		this.hitSprite.setName('hitsprite');
+		this.hitSprite.setData('hitSprite', this.hitSprite);
 
 		groups.walk.add(this.sprite);
 		groups.hit.add(this.hitSprite);
@@ -55,11 +61,8 @@ class Robot {
 				this.sprite.setVelocity(0,0);
 			}
 		}
-		if (
-			this.sprite.anims.getCurrentKey() == "playerattack" &&
-			this.sprite.anims.getProgress() >= 1
-		) {
-			this.sprite.play('playerwalk');
+		if (this.currentAttack != null) {
+			this.currentAttack = this.currentAttack.update();
 		}
 	}
 
@@ -67,10 +70,19 @@ class Robot {
 		return this.sprite;
 	}
 
-	attack(target) {
+	attack(target, groups) {
 		let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
 		let direction = position.negate().add(target).normalize();
-		this.sprite.play('playerattack');
+		if (this.currentAttack != null) {
+			this.currentAttack = this.currentAttack.destroy();
+		}
+		this.currentAttack = new Attack(
+			this.scene,
+			this.sprite, this.hitSprite,
+			'playerattack', 'playerwalk',
+			0.2, 0.6,
+			groups
+		);
 	}
 
 	moveToward(target) {
@@ -80,7 +92,7 @@ class Robot {
 };
 
 Robot.preload = (scene) => {
-	scene.load.image('attackspin', 'images/AttackSpin.png');
+	Attack.preload(scene);
 	for (let sequence in Robot.images) {
 		for (let index in Robot.images[sequence])
 		{

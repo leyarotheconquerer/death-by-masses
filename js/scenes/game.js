@@ -20,7 +20,8 @@ class Game extends Phaser.Scene {
 			robots: {
 				walk: this.physics.add.group(),
 				hit: this.physics.add.group()
-			}
+			},
+			attacks: this.physics.add.group()
 		};
 		this.map.create();
 		this.player.create(groups.robots);
@@ -49,7 +50,8 @@ class Game extends Phaser.Scene {
 			}
 			else if (pointer.buttons == 2) {
 				this.player.attack(
-					this.cameras.main.getWorldPoint(pointer.x, pointer.y)
+					this.cameras.main.getWorldPoint(pointer.x, pointer.y),
+					[ groups.robots.hit ]
 				);
 			}
 		}, this);
