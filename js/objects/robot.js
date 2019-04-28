@@ -4,55 +4,121 @@ import Weapon from '../components/weapon.js';
 
 class Robot {
 	constructor(scene, name, x, y, groups) {
+		const config = {
+			name: name,
+			position: { x, y },
+			groups: groups,
+			health: {
+				total: 10
+			},
+			weapon: {
+				animation: 'playerattack',
+				start: 0.2,
+				end: 0.6,
+				damage: 1
+			},
+			sprite: {
+				idle: 'playerwalk',
+				walk: 'playerwalk',
+				scale: { x: 0.5, y: 0.5 },
+				circle: {
+					radius: 40,
+					offset: { x: 84, y: 140 }
+				}
+			},
+			hitbox: {
+				size: { w: 60, h: 90 },
+				offset: { x: -14, y: -30 }
+			},
+			animations: {
+				playerwalk: {
+					frameRate: 24,
+					frames: Robot.images.walk.map(image => ({ key: image.name })),
+					repeat: Phaser.FOREVER
+				},
+				playerattack: {
+					frameRate: 24,
+					frames: Robot.images.attack.map(image => ({ key: image.name })),
+					repeat: 0
+				},
+			}
+		};
 		this.scene = scene;
 		this.name = name;
 
-		this.sprite;
-		this.hitSprite;
-		this.health;
 		this.moving = false;
-		this.target = {x, y};
+		this.target = config.position;
 
-		this.scene.anims.create({
-			key: 'playerwalk',
-			frames: Robot.images.walk.map(image => ({ key: image.name })),
-			frameRate: 24,
-			repeat: Phaser.FOREVER
-		});
-		this.scene.anims.create({
-			key: 'playerattack',
-			frames: Robot.images.attack.map(image => ({ key: image.name })),
-			frameRate: 24,
-			repeat: 0
-		});
+		for (let key in config.animations) {
+			this.scene.anims.create({
+				key,
+				...config.animations[key]
+			});
+		}
 
-		this.sprite = this.scene.physics.add
-			.sprite(this.target.x, this.target.y, this.name)
-			.play('playerwalk', false, Math.trunc(Math.random() * Robot.images.walk.length));
-		this.sprite.scaleX = 0.5;
-		this.sprite.scaleY = 0.5;
-		this.sprite.setCircle(40, 84, 140);
-
-		this.hitSprite = this.scene.physics.add
-			.sprite(this.target.x, this.target.y, `${this.name}-hit`);
-		this.hitSprite.setAlpha(0);
-		this.hitSprite.setSize(60, 90);
-
-		groups.walk.add(this.sprite);
-		groups.hit.add(this.hitSprite);
-
-		this.health = new Health(10, () => {
+		this.health = new Health(config.health.total, () => {
 			console.log("I'm dead says", this.name);
 			this.destroy();
 		});
-		this.weapon = new Weapon(this.scene, this.sprite, 2, 'playerattack', 0.2, 0.6);
+		this.sprite = this.createSprite(
+			config.sprite,
+			config.animations,
+			this.target, this.name
+		);
+		this.hitSprite = this.createHitBox(
+			config.hitbox,
+			this.health,
+			this.target, this.name
+		);
 
+		config.groups.walk.add(this.sprite);
+		config.groups.hit.add(this.hitSprite);
 		this.sprite.setDrag(1000, 1000);
+		this.weapon = new Weapon(
+			this.scene, this.sprite,
+			config.weapon.damage,
+			config.weapon.animation,
+			config.weapon.start, config.weapon.end
+		);
+	}
 
-		this.hitSprite.setDataEnabled();
-		this.hitSprite.setName('hitsprite');
-		this.hitSprite.setData('hitSprite', this.hitSprite);
-		this.hitSprite.setData('health', this.health);
+	createSprite(config, animations, target, name) {
+		let sprite = this.scene.physics.add
+			.sprite(target.x, target.y, name)
+			.play(
+				config.idle,
+				false,
+				Math.trunc(Math.random() * animations[config.idle].frames.length)
+			);
+		sprite.setName(name);
+		sprite.scaleX = config.scale.x;
+		sprite.scaleY = config.scale.y;
+		sprite.setCircle(
+			config.circle.radius,
+			config.circle.offset.x,
+			config.circle.offset.y
+		);
+		return sprite;
+	}
+
+	createHitBox(config, health, target, name) {
+		let hitbox = this.scene.physics.add
+			.sprite(target.x, target.y, `${name}-hitbox`);
+		hitbox.setAlpha(0);
+		console.log("Hitbox config", config);
+		hitbox.setSize(
+			config.size.w,
+			config.size.h
+		);
+		hitbox.setOffset(
+			config.offset.x,
+			config.offset.y
+		);
+		hitbox.setDataEnabled();
+		hitbox.setName('hitsprite');
+		hitbox.setData('hitSprite', hitbox);
+		hitbox.setData('health', health);
+		return hitbox;
 	}
 
 	update(delta) {

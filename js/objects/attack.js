@@ -7,6 +7,7 @@ class Attack {
 
 		this.sprite = this.scene.physics.add
 			.sprite(position.x, position.y, 'attackspin');
+		this.sprite.depth = position.depth + 1;
 		this.sprite.scaleX = 0.5
 		this.sprite.scaleY = 0.5
 		this.sprite.setSize(256, 110);
@@ -41,11 +42,15 @@ class Attack {
 	destroy() {
 		if (this.sprite != null) {
 			this.sprite.destroy();
+			this.sprite = null;
 		}
 	}
 
 	update(position) {
-		this.sprite.setPosition(position.x, position.y);
+		if (this.sprite != null) {
+			this.sprite.setPosition(position.x, position.y);
+			this.sprite.depth = position.depth + 1;
+		}
 	}
 
 	enable() {

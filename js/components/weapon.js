@@ -30,7 +30,7 @@ class Weapon {
 			}
 		}
 		if (this.currentAttack) {
-			this.currentAttack.update({ x: this.sprite.x, y: this.sprite.y });
+			this.currentAttack.update({ x: this.sprite.x, y: this.sprite.y, depth: this.sprite.depth });
 		}
 	}
 
@@ -44,7 +44,7 @@ class Weapon {
 		this.sprite.play(this.attackAnim);
 		this.currentAttack = new Attack(
 			this.scene,
-			{ x: this.sprite.x, y: this.sprite.y },
+			{ x: this.sprite.x, y: this.sprite.y, depth: this.sprite.depth },
 			myHealth,
 			groups,
 			(targetHealth) => {
