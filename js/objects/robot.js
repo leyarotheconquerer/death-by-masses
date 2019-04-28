@@ -1,4 +1,5 @@
 import Attack from './attack.js';
+import Health from '../components/health.js';
 
 class Robot {
 	constructor(scene, name, x, y, groups) {
@@ -7,6 +8,7 @@ class Robot {
 
 		this.sprite;
 		this.hitSprite;
+		this.health;
 		this.currentAttack = null;
 		this.moving = false;
 		this.target = {x, y};
@@ -35,14 +37,21 @@ class Robot {
 			.sprite(this.target.x, this.target.y, `${this.name}-hit`);
 		this.hitSprite.setAlpha(0);
 		this.hitSprite.setSize(60, 90);
-		this.hitSprite.setDataEnabled();
-		this.hitSprite.setName('hitsprite');
-		this.hitSprite.setData('hitSprite', this.hitSprite);
 
 		groups.walk.add(this.sprite);
 		groups.hit.add(this.hitSprite);
 
+		this.health = new Health(10, () => {
+			console.log("I'm dead says", this.name);
+			this.destroy();
+		});
+
 		this.sprite.setDrag(1000, 1000);
+
+		this.hitSprite.setDataEnabled();
+		this.hitSprite.setName('hitsprite');
+		this.hitSprite.setData('hitSprite', this.hitSprite);
+		this.hitSprite.setData('health', this.health);
 	}
 
 	update(delta) {
@@ -65,6 +74,12 @@ class Robot {
 		}
 	}
 
+	destroy() {
+		this.sprite.destroy();
+		this.hitSprite.destroy();
+		if (this.currentAttack) { this.currentAttack.destroy(); }
+	}
+
 	getObject() {
 		return this.sprite;
 	}
@@ -77,7 +92,7 @@ class Robot {
 		}
 		this.currentAttack = new Attack(
 			this.scene,
-			this.sprite, this.hitSprite,
+			this.sprite, this.health,
 			'playerattack', 'playerwalk',
 			0.2, 0.6,
 			groups

@@ -1,8 +1,8 @@
 class Attack {
-	constructor(scene, attacker, attackerHit, attackAnim, resumeAnim, start, end, groups) {
+	constructor(scene, attacker, attackerHealth, attackAnim, resumeAnim, start, end, groups) {
 		this.scene = scene;
 		this.attacker = attacker;
-		this.attackerHit = attackerHit;
+		this.attackerHealth = attackerHealth;
 		this.attackAnim = attackAnim;
 		this.resumeAnim = resumeAnim;
 		this.start = start;
@@ -23,17 +23,19 @@ class Attack {
 		for(let i = 0; i < groups.length; ++i) {
 			let group = groups[i];
 			this.scene.physics.add.collider(this.sprite, group,
-				(a, b) => { console.log("attack hit"); },
 				(a, b) => {
+					let targetHealth = b.getData('health');
+					this.targetsHit = [ ...this.targetsHit, targetHealth ];
+					targetHealth.damage(1);
+				},
+				(a, b) => {
+					let targetHealth = b.getData('health');
 					if (
 						this.ready &&
-						b.getData('hitSprite') != this.attackerHit &&
-						this.targetsHit.indexOf(b.getData('hitSprite')) < 0
+						targetHealth &&
+						targetHealth != this.attackerHealth &&
+						this.targetsHit.indexOf(targetHealth) < 0
 					) { 
-						this.targetsHit = [
-							...this.targetsHit,
-							b.getData('hitSprite')
-						];
 						return true;
 					}
 					return false;
