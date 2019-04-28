@@ -53,7 +53,7 @@ class Score {
 		}
 		this.killGroup = this.scene.add.group();
 		let background = this.scene.add.rectangle(795, 5,
-			200, 110,
+			200, 85, //110,
 			0x333333, 0.7
 		);
 		background.setOrigin(1, 0);
@@ -61,10 +61,10 @@ class Score {
 		this.killGroup.add(this.createText(605, 5, "Kills", 20, 'white'));
 		this.killGroup.add(this.createText(605, 35, "Total: ", 16));
 		this.killGroup.add(this.createText(730, 35, counts.total, 16, 'white'));
-		this.killGroup.add(this.createText(605, 60, "Until Spawn: ", 16));
+		this.killGroup.add(this.createText(605, 60, "Until Ally: ", 16));
 		this.killGroup.add(this.createText(730, 60, counts.spawn, 16, 'white'));
-		this.killGroup.add(this.createText(605, 85, "Until Level: ", 16));
-		this.killGroup.add(this.createText(730, 85, counts.level, 16, 'white'));
+		//this.killGroup.add(this.createText(605, 85, "Until Level: ", 16));
+		//this.killGroup.add(this.createText(730, 85, counts.level, 16, 'white'));
 	}
 
 	health(current, total) {
@@ -80,6 +80,23 @@ class Score {
 		}
 		this.healthLabel = this.createText(400, 4, `${current} / ${total}`, 20, 'white');
 		this.healthLabel.setOrigin(0.5, 0);
+	}
+
+	lose() {
+		let title = this.createText(400, 300, "You Lose", 32, 'white');
+		let subtitle = this.createText(400, 350, "Refresh Page to Try Again", 24);
+		title.setOrigin(0.5, 0.5);
+		subtitle.setOrigin(0.5, 0.5);
+	}
+
+	win(time) {
+		let seconds = time / 1000;
+		let title = this.createText(400, 300, "You Win!", 32, 'white');
+		let subtitle = this.createText(400, 350, `You beat the game in ${seconds} seconds`, 28);
+		let restart = this.createText(400, 400, `Refresh Page to Try Again`, 24);
+		title.setOrigin(0.5, 0.5);
+		subtitle.setOrigin(0.5, 0.5);
+		restart.setOrigin(0.5, 0.5);
 	}
 
 	createText(x, y, message, size, color = '#999999') {

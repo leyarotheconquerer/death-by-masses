@@ -24,6 +24,7 @@ class Game extends Phaser.Scene {
 	}
 
 	create() {
+		this.start = Date.now();
 		this.groups = {
 			player: {
 				hit: this.physics.add.group()
@@ -79,24 +80,32 @@ class Game extends Phaser.Scene {
 				hit: this.groups.player.hit,
 				target: [ this.groups.enemies.hit ]
 			},
-			() => console.log("You lose"));
+			() => this.hud.score.lose()
+		);
 		let otherSpawns = this.map.level1meleeSpawns();
 		this.level1melee = [];
 		this.allies = [];
 		for(let index in otherSpawns) {
-			this.level1melee = [
-				...this.level1melee,
-				this.spawner.spawnEnemy(
-					'level1melee',
-					[otherSpawns[index]],
-					{
-						walk: this.groups.robots.walk,
-						hit: this.groups.enemies.hit,
-						target: [ this.groups.player.hit, this.groups.allies.hit ]
-					},
-					() => { this.score.addKill(); }
-				)
-			];
+			for (let i = 0; i <= index; ++i) {
+				this.level1melee = [
+					...this.level1melee,
+					this.spawner.spawnEnemy(
+						'level1melee',
+						[otherSpawns[index]],
+						{
+							walk: this.groups.robots.walk,
+							hit: this.groups.enemies.hit,
+							target: [ this.groups.player.hit, this.groups.allies.hit ]
+						},
+						() => {
+							this.score.addKill();
+							if (this.level1melee.length <= 1) {
+								this.hud.score.win(Date.now() - this.start);
+							}
+						}
+					)
+				];
+			}
 		}
 
 		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
