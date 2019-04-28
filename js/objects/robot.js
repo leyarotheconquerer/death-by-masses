@@ -76,6 +76,7 @@ class Robot {
 		this.sprite.setDrag(1000, 1000);
 		this.weapon = new Weapon(
 			this.scene, this.sprite,
+			this.health,
 			config.weapon.damage,
 			config.weapon.animation,
 			config.weapon.start, config.weapon.end
