@@ -1,7 +1,6 @@
 class Player {
 	constructor(input, camera, robot, targetGroups) {
 		this.targetGroups = targetGroups;
-		console.log("constructing" ,targetGroups);
 		input.setPollAlways();
 		input.on('pointerdown', (pointer) => {
 			if (pointer.buttons == 1) {

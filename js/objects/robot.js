@@ -74,7 +74,6 @@ class Robot {
 		let hitbox = this.scene.physics.add
 			.sprite(target.x, target.y, `${name}-hitbox`);
 		hitbox.setAlpha(0);
-		console.log("Hitbox config", config);
 		hitbox.setSize(
 			config.size.w,
 			config.size.h

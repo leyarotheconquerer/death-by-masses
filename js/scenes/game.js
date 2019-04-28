@@ -1,12 +1,18 @@
 import Map from '../objects/map.js';
 import Robot from '../objects/robot.js';
 import Level1Melee from '../objects/robots/level1melee.js';
+import Hud from './hud.js';
 
 class Game extends Phaser.Scene {
 	constructor() {
 		super({ key: 'game' });
 		this.map;
 		this.player;
+	}
+
+	init() {
+		this.scene.add('hud', Hud, true);
+		this.hud = this.scene.get('hud');
 	}
 
 	preload() {
@@ -82,6 +88,16 @@ class Game extends Phaser.Scene {
 			this.level1melee[index].update(delta);
 		}
 		this.level1melee = this.level1melee.filter(robot => !robot.dead());
+		if (this.hud.score) {
+			this.hud.score.health(
+				this.player.health.get(),
+				this.player.health.total()
+			);
+			this.hud.score.remaining([{
+				label: 'Level 1 - Melee',
+				count: this.level1melee.length
+			}]);
+		}
 	}
 }
 
