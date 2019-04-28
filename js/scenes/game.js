@@ -31,6 +31,7 @@ class Game extends Phaser.Scene {
 		this.map = new Map(this);
 		this.player = new Robot(this,
 			this.map.playerSpawn(),
+			null,
 			{
 				walk: this.groups.robots.walk,
 				hit: this.groups.player.hit,
@@ -49,6 +50,7 @@ class Game extends Phaser.Scene {
 				...this.level1melee,
 				new Robot(this,
 					otherSpawns[index],
+					null,
 					{
 						walk: this.groups.robots.walk,
 						hit: this.groups.enemies.hit,

@@ -5,7 +5,7 @@ import Player from '../components/player.js';
 import AiMelee from '../components/aimelee.js';
 
 class Robot {
-	constructor(scene, position, groups, config) {
+	constructor(scene, position, follow, groups, config) {
 		this.scene = scene;
 		this.name = config.name;
 
@@ -48,7 +48,7 @@ class Robot {
 			config.weapon.animation,
 			config.weapon.start, config.weapon.end
 		);
-		this.controller = this.setController(config.controller, groups.target);
+		this.controller = this.setController(config.controller, follow, groups.target);
 	}
 
 	createSprite(config, animations, target, name) {
@@ -90,7 +90,7 @@ class Robot {
 		return hitbox;
 	}
 
-	setController(config, targetGroups) {
+	setController(config, follow, targetGroups) {
 		return {
 			player: () => new Player(
 				this.scene.input,
@@ -100,6 +100,7 @@ class Robot {
 			),
 			aimelee: () => new AiMelee(
 				config,
+				follow,
 				this.sprite, this,
 				targetGroups
 			)

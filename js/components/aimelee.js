@@ -1,8 +1,9 @@
 class AiMelee {
-	constructor(config, robotSprite, robot, targetGroups) {
+	constructor(config, follow, robotSprite, robot, targetGroups) {
 		this.robot = robot;
 		this.targetGroups = targetGroups;
 		this.robotSprite = this.robot.getObject();
+		this.follow = follow;
 		this.config = config;
 		this.detected = Date.now();
 		this.lastAttack = Date.now();
@@ -54,6 +55,17 @@ class AiMelee {
 			else {
 				this.attackTarget = null;
 			}
+		}
+		else if (this.follow != null) {
+			let distance = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
+				.distance({ x: this.follow.x, y: this.follow.y }) - this.config.detect.radius / 2;
+			let target = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
+				.negate()
+				.add({ x: this.follow.x, y: this.follow.y })
+				.normalize()
+				.multiply({ x: distance, y: distance })
+				.add({ x: this.robotSprite.x, y: this.robotSprite.y });
+			this.robot.moveToward(target);
 		}
 	}
 
