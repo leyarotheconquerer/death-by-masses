@@ -25,21 +25,28 @@ class Game extends Phaser.Scene {
 		};
 		this.map = new Map(this);
 		this.player = new Robot(this,
-			{x: 400, y: 300},
+			this.map.playerSpawn(),
 			this.groups.robots,
 			{
 				...Level1Melee.config,
 				name: 'player-level1melee',
 			}
 		);
-		this.other = new Robot(this,
-			{x: 500, y: 400},
-			this.groups.robots,
-			{
-				...Level1Melee.config,
-				name: 'other-level1melee',
-			}
-		);
+		let otherSpawns = this.map.level1meleeSpawns();
+		this.level1melee = [];
+		for(let index in otherSpawns) {
+			this.level1melee = [
+				...this.level1melee,
+				new Robot(this,
+					otherSpawns[index],
+					this.groups.robots,
+					{
+						...Level1Melee.config,
+						name: 'other-level1melee',
+					}
+				)
+			];
+		}
 
 		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 		this.cameras.main.startFollow(
@@ -80,7 +87,10 @@ class Game extends Phaser.Scene {
 
 	update(time, delta) {
 		this.player.update(delta);
-		this.other.update(delta);
+		for(let index in this.level1melee) {
+			this.level1melee[index].update(delta);
+		}
+		this.level1melee = this.level1melee.filter(robot => !robot.dead());
 	}
 }
 

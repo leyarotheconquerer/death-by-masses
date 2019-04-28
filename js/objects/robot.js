@@ -115,6 +115,10 @@ class Robot {
 		this.destroyed = true;
 	}
 
+	dead() {
+		return this.destroyed;
+	}
+
 	getObject() {
 		return this.sprite;
 	}

@@ -10,8 +10,38 @@ class Map {
 		});
 		this.tiles = this.map.addTilesetImage('Tiles', 'tiles');
 		this.groundLayer = this.map.createStaticLayer(0, this.tiles);
-		this.groundLayer.scaleX = 0.25;
-		this.groundLayer.scaleY = 0.25;
+		const scaleFactor = 0.25;
+		this.groundLayer.scaleX = scaleFactor;
+		this.groundLayer.scaleY = scaleFactor;
+		this.spawns = this.map.getObjectLayer('Spawners')
+			.objects
+			.reduce(
+				(spawns, object) => ({
+					...spawns,
+					[object.type]: [
+						...spawns[object.type] != null ?
+							spawns[object.type] :
+							[],
+						{
+							x: object.x * scaleFactor,
+							y: object.y * scaleFactor
+						}
+					]
+				}),
+				{}
+			);
+	}
+
+	playerSpawn() {
+		return this.spawns.PlayerSpawn != null ?
+			this.spawns.PlayerSpawn[0] :
+			{ x: 400, y: 300 };
+	}
+
+	level1meleeSpawns() {
+		return this.spawns.Level1Melee != null ?
+			this.spawns.Level1Melee :
+			[ { x: 500, y: 400 } ]
 	}
 };
 
