@@ -8,6 +8,7 @@ class AiMelee {
 		this.detected = Date.now();
 		this.lastAttack = Date.now();
 		this.attackTarget = null;
+		this.preferredRadius = Math.random() * this.config.detect.Radius / 2;
 
 		this.detectSprite = this.robotSprite.scene.physics.add
 			.sprite(this.robotSprite.x, this.robotSprite.y, null);
@@ -42,14 +43,10 @@ class AiMelee {
 					distance < this.config.attack.radius &&
 					(Date.now() - this.lastAttack) >= (1000 / this.config.attack.rate)
 				) {
-					this.lastAttack = Date.now();
-					this.robot.attack(
-						{ x: this.attackTarget.x, y: this.attackTarget.y },
-						this.targetGroups
-					);
+					this.attack();
 				}
 				else if (distance > this.config.attack.radius) {
-					this.robot.moveToward({ x: this.attackTarget.x, y: this.attackTarget.y });
+					this.approach();
 				}
 			}
 			else {
@@ -57,16 +54,34 @@ class AiMelee {
 			}
 		}
 		else if (this.follow != null) {
-			let distance = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
-				.distance({ x: this.follow.x, y: this.follow.y }) - this.config.detect.radius / 2;
-			let target = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
-				.negate()
-				.add({ x: this.follow.x, y: this.follow.y })
-				.normalize()
-				.multiply({ x: distance, y: distance })
-				.add({ x: this.robotSprite.x, y: this.robotSprite.y });
-			this.robot.moveToward(target);
+			this.follow();
 		}
+	}
+
+	attack() {
+		this.lastAttack = Date.now();
+		this.robot.attack(
+			{ x: this.attackTarget.x, y: this.attackTarget.y },
+			this.targetGroups
+		);
+	}
+
+	approach() {
+		this.robot.moveToward({ x: this.attackTarget.x, y: this.attackTarget.y });
+	}
+
+	follow() {
+		let distance = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
+			.distance({ x: this.follow.x, y: this.follow.y })
+			- this.config.detect.radius
+			+ this.preferredRadius;
+		let target = (new Phaser.Math.Vector2(this.robotSprite.x, this.robotSprite.y))
+			.negate()
+			.add({ x: this.follow.x, y: this.follow.y })
+			.normalize()
+			.multiply({ x: distance, y: distance })
+			.add({ x: this.robotSprite.x, y: this.robotSprite.y });
+		this.robot.moveToward(target);
 	}
 
 	destroy() {
