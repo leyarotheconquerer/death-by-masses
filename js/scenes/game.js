@@ -108,7 +108,7 @@ class Game extends Phaser.Scene {
 			}
 		}
 
-		this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
+		//this.cameras.main.setBackgroundColor('rgba(113, 65, 32, 1)');
 		this.cameras.main.startFollow(
 			this.player.getObject(),
 			false,
@@ -125,6 +125,10 @@ class Game extends Phaser.Scene {
 			this.level1melee[index].update(delta);
 		}
 		this.level1melee = this.level1melee.filter(robot => !robot.dead());
+		if (!this.hack && this.level1melee.length <= 0) {
+			this.hack = true;
+			this.hud.score.win(Date.now() - this.start);
+		}
 		for(let index in this.allies) {
 			this.allies[index].update(delta);
 		}
