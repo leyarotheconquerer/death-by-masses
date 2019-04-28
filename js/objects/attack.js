@@ -1,19 +1,12 @@
 class Attack {
-	constructor(scene, attacker, attackerHealth, attackAnim, resumeAnim, start, end, groups) {
+	constructor(scene, position, myHealth, groups, damageCallback) {
 		this.scene = scene;
-		this.attacker = attacker;
-		this.attackerHealth = attackerHealth;
-		this.attackAnim = attackAnim;
-		this.resumeAnim = resumeAnim;
-		this.start = start;
-		this.end = end;
 
 		this.targetsHit = [];
 		this.ready = false;
 
-		this.attacker.play(attackAnim);
 		this.sprite = this.scene.physics.add
-			.sprite(this.attacker.x, this.attacker.y, 'attackspin');
+			.sprite(position.x, position.y, 'attackspin');
 		this.sprite.scaleX = 0.5
 		this.sprite.scaleY = 0.5
 		this.sprite.setSize(256, 110);
@@ -26,14 +19,14 @@ class Attack {
 				(a, b) => {
 					let targetHealth = b.getData('health');
 					this.targetsHit = [ ...this.targetsHit, targetHealth ];
-					targetHealth.damage(1);
+					damageCallback(targetHealth);
 				},
 				(a, b) => {
 					let targetHealth = b.getData('health');
 					if (
 						this.ready &&
 						targetHealth &&
-						targetHealth != this.attackerHealth &&
+						targetHealth != myHealth &&
 						this.targetsHit.indexOf(targetHealth) < 0
 					) { 
 						return true;
@@ -49,27 +42,14 @@ class Attack {
 		if (this.sprite != null) {
 			this.sprite.destroy();
 		}
-		return null;
 	}
 
-	update() {
-		let destroy = false;
-		if (this.attacker.anims.getCurrentKey() == this.attackAnim) {
-			if (this.sprite) {
-				this.sprite.setPosition(this.attacker.x, this.attacker.y);
-				if (this.attacker.anims.getProgress() >= this.start) {
-					this.ready = true;
-				}
-				if (this.attacker.anims.getProgress() >= this.end) {
-					this.sprite = this.destroy();
-				}
-			}
-			if (this.attacker.anims.getProgress() >= 1) {
-				this.attacker.play(this.resumeAnim);
-				return null;
-			}
-		}
-		return this;
+	update(position) {
+		this.sprite.setPosition(position.x, position.y);
+	}
+
+	enable() {
+		this.ready = true;
 	}
 };
 

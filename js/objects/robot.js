@@ -1,5 +1,6 @@
 import Attack from './attack.js';
 import Health from '../components/health.js';
+import Weapon from '../components/weapon.js';
 
 class Robot {
 	constructor(scene, name, x, y, groups) {
@@ -9,7 +10,6 @@ class Robot {
 		this.sprite;
 		this.hitSprite;
 		this.health;
-		this.currentAttack = null;
 		this.moving = false;
 		this.target = {x, y};
 
@@ -45,6 +45,7 @@ class Robot {
 			console.log("I'm dead says", this.name);
 			this.destroy();
 		});
+		this.weapon = new Weapon(this.scene, this.sprite, 2, 'playerattack', 0.2, 0.6);
 
 		this.sprite.setDrag(1000, 1000);
 
@@ -55,30 +56,30 @@ class Robot {
 	}
 
 	update(delta) {
-		const speed = 300;
-		const sleep = 100;
-		this.hitSprite.setPosition(this.sprite.x, this.sprite.y);
-		this.sprite.depth = this.sprite.y;
-		if (this.moving) {
-			let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
-			let distance = position.distanceSq(this.target);
-			if (distance > sleep) {
-				this.scene.physics.moveToObject(this.sprite, this.target, speed);
+		if (!this.destroyed) {
+			const speed = 300;
+			const sleep = 100;
+			this.hitSprite.setPosition(this.sprite.x, this.sprite.y);
+			this.sprite.depth = this.sprite.y;
+			if (this.moving) {
+				let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
+				let distance = position.distanceSq(this.target);
+				if (distance > sleep) {
+					this.scene.physics.moveToObject(this.sprite, this.target, speed);
+				}
+				else {
+					this.moving = false;
+					this.sprite.setVelocity(0,0);
+				}
 			}
-			else {
-				this.moving = false;
-				this.sprite.setVelocity(0,0);
-			}
-		}
-		if (this.currentAttack != null) {
-			this.currentAttack = this.currentAttack.update();
+			this.weapon.update();
 		}
 	}
 
 	destroy() {
 		this.sprite.destroy();
 		this.hitSprite.destroy();
-		if (this.currentAttack) { this.currentAttack.destroy(); }
+		this.destroyed = true;
 	}
 
 	getObject() {
@@ -88,16 +89,7 @@ class Robot {
 	attack(target, groups) {
 		let position = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
 		let direction = position.negate().add(target).normalize();
-		if (this.currentAttack != null) {
-			this.currentAttack = this.currentAttack.destroy();
-		}
-		this.currentAttack = new Attack(
-			this.scene,
-			this.sprite, this.health,
-			'playerattack', 'playerwalk',
-			0.2, 0.6,
-			groups
-		);
+		this.weapon.attack(direction, this.health, groups);
 	}
 
 	moveToward(target) {

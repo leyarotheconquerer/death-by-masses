@@ -7,6 +7,7 @@ class Health {
 
 	damage(amount) {
 		this.health -= amount;
+		this.health = this.health < 0 ? 0 : this.health;
 		console.log(`I took ${amount} damage: ${this.health} / ${this.maxHealth} remains`);
 		if (this.health <= 0) {
 			this.deathCallback();
@@ -15,9 +16,7 @@ class Health {
 
 	heal(amount) {
 		this.health += amount;
-		if (this.health > this.maxHealth) {
-			this.health = this.maxHealth;
-		}
+		this.health = this.health > this.maxHealth ? this.maxHealth : this.health;
 	}
 
 	get() {
