@@ -1,4 +1,4 @@
-import Score from '../objects/score.js';
+import Score from '../hud/score.js';
 
 class Hud extends Phaser.Scene {
 	constructor(game) {
