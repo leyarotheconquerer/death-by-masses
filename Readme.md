@@ -1,36 +1,17 @@
-Ludum Dare 44
-=============
+Death by Masses
+===============
+
+Fighting game where you spawn more of yourself to fight with you.
 
 Entry for the Ludum Dare 44.
 
 Theme: Your Life is Currency
 
-Life is currency
-The more life of your type, the more currency power you have
-Fight all the other life to gain supremacy
-The more supreme, the more buying power
-Eventually you can buy your consciousness an entirely new and improved body
-But only one of them
-Then that body must fight its way to the top
-All those old copies of yourself? Fight them into oblivion
+This game did not reach its desired goal, so the theme was lost somewhere along the way.
+However this is a playable minigame where you try to kill all the enemies.
 
-Evolve to the top
-Survival of the fittest
-
-* Fighting game where you spawn more of yourself to fight with you
-* When you reach a certain capacity, you can upgrade to new weapons and more powerful attacks/defenses
-* But then all your copies will fight you as you again try to spawn more of yoursel
-
-* Your health is aggregated over all your copies
-* When you die, you respawn as one of your copies
-* You lose if you have no remaining copies
-* When you upgrade to the next level, all your copies are suddenly against you
-
-Robot theme, because James says so.
-
-Top-down, isometric?/front-on
-
-Dev steps:
+Development Plan
+----------------
 
 1. Develop mechanics
 	1. Player mechanics
