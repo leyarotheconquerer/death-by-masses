@@ -14,10 +14,12 @@ class Robot {
 		this.deathCallback = deathCallback;
 
 		for (let key in config.animations) {
-			this.scene.anims.create({
-				key,
-				...config.animations[key]
-			});
+			if (!this.scene.anims.exists(key)) {
+				let animation = this.scene.anims.create({
+					key,
+					...config.animations[key]
+				});
+			}
 		}
 
 		this.health = new Health(this.scene,
@@ -54,12 +56,13 @@ class Robot {
 	}
 
 	createSprite(config, animations, target, name) {
+		let frame = Math.trunc(Math.random() * animations[config.idle].frames.length);
 		let sprite = this.scene.physics.add
 			.sprite(target.x, target.y, name)
 			.play(
 				config.idle,
 				false,
-				Math.trunc(Math.random() * animations[config.idle].frames.length)
+				frame
 			);
 		sprite.setName(name);
 		sprite.scaleX = config.scale.x;
