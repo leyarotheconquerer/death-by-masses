@@ -54,7 +54,6 @@ class Game extends Phaser.Scene {
 		];
 		this.score = new Score(levels,
 			(level, type) => {
-				console.log('spawn', level, type);
 				this.allies = [
 					...this.allies,
 					this.spawner.spawnAlly(type,
@@ -72,6 +71,31 @@ class Game extends Phaser.Scene {
 		);
 		this.spawner = new Spawner(this);
 		this.map = new Map(this);
+		const playerRespawn = () => {
+			if (this.allies.length > 0) {
+				const ally = this.allies[0];
+				this.player = this.spawner.spawnPlayer(
+					'level1melee',
+					{ x: ally.sprite.x, y: ally.sprite.y },
+					{
+						walk: this.groups.robots.walk,
+						hit: this.groups.player.hit,
+						target: [ this.groups.enemies.hit ]
+					},
+					playerRespawn
+				);
+				this.cameras.main.startFollow(
+					this.player.getObject(),
+					false,
+					0.1, 0.1,
+					0, 0
+				);
+				ally.destroy();
+			}
+			else {
+				this.hud.score.lose();
+			}
+		};
 		this.player = this.spawner.spawnPlayer(
 			'level1melee',
 			this.map.playerSpawn(),
@@ -80,15 +104,15 @@ class Game extends Phaser.Scene {
 				hit: this.groups.player.hit,
 				target: [ this.groups.enemies.hit ]
 			},
-			() => this.hud.score.lose()
+			playerRespawn
 		);
 		let otherSpawns = this.map.level1meleeSpawns();
-		this.level1melee = [];
+		this.enemies = [];
 		this.allies = [];
 		for(let index in otherSpawns) {
 			for (let i = 0; i <= index; ++i) {
-				this.level1melee = [
-					...this.level1melee,
+				this.enemies = [
+					...this.enemies,
 					this.spawner.spawnEnemy(
 						'level1melee',
 						[otherSpawns[index]],
@@ -99,7 +123,7 @@ class Game extends Phaser.Scene {
 						},
 						() => {
 							this.score.addKill();
-							if (this.level1melee.length <= 1) {
+							if (this.enemies.length <= 1) {
 								this.hud.score.win(Date.now() - this.start);
 							}
 						}
@@ -121,11 +145,11 @@ class Game extends Phaser.Scene {
 
 	update(time, delta) {
 		this.player.update(delta);
-		for(let index in this.level1melee) {
-			this.level1melee[index].update(delta);
+		for(let index in this.enemies) {
+			this.enemies[index].update(delta);
 		}
-		this.level1melee = this.level1melee.filter(robot => !robot.dead());
-		if (!this.hack && this.level1melee.length <= 0) {
+		this.enemies = this.enemies.filter(robot => !robot.dead());
+		if (!this.hack && this.enemies.length <= 0) {
 			this.hack = true;
 			this.hud.score.win(Date.now() - this.start);
 		}
@@ -141,7 +165,7 @@ class Game extends Phaser.Scene {
 			);
 			this.hud.score.remaining([{
 				label: 'Level 1 - Melee',
-				count: this.level1melee.length
+				count: this.enemies.length
 			}]);
 		}
 	}

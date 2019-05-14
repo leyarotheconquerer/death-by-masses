@@ -25,14 +25,18 @@ class Health {
 		this.healthBar.setScale(this.health / this.maxHealth, 1);
 	}
 
+	destroy() {
+		this.damageBar.destroy();
+		this.healthBar.destroy();
+	}
+
 	damage(amount) {
 		this.health -= amount;
 		this.health = this.health < 0 ? 0 : this.health;
 		console.log(`I took ${amount} damage: ${this.health} / ${this.maxHealth} remains`);
 		if (this.health <= 0) {
-			this.damageBar.destroy();
-			this.healthBar.destroy();
 			this.deathCallback();
+			this.destroy();
 		}
 	}
 

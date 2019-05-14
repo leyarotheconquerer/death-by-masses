@@ -53,7 +53,7 @@ class Score {
 		}
 		this.killGroup = this.scene.add.group();
 		let background = this.scene.add.rectangle(795, 5,
-			200, 85, //110,
+			200, 110,
 			0x333333, 0.7
 		);
 		background.setOrigin(1, 0);
@@ -63,8 +63,8 @@ class Score {
 		this.killGroup.add(this.createText(730, 35, counts.total, 16, 'white'));
 		this.killGroup.add(this.createText(605, 60, "Until Ally: ", 16));
 		this.killGroup.add(this.createText(730, 60, counts.spawn, 16, 'white'));
-		//this.killGroup.add(this.createText(605, 85, "Until Level: ", 16));
-		//this.killGroup.add(this.createText(730, 85, counts.level, 16, 'white'));
+		this.killGroup.add(this.createText(605, 85, "Until Level: ", 16));
+		this.killGroup.add(this.createText(730, 85, counts.level, 16, 'white'));
 	}
 
 	health(current, total) {

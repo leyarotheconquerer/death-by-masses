@@ -52,7 +52,7 @@ class Robot {
 			config.weapon.animation,
 			config.weapon.start, config.weapon.end
 		);
-		this.controller = this.setController(config.controller, follow, groups.target);
+		this.setController(config.controller, follow, groups.target);
 	}
 
 	createSprite(config, animations, target, name) {
@@ -95,7 +95,7 @@ class Robot {
 	}
 
 	setController(config, follow, targetGroups) {
-		return {
+		this.controller = {
 			player: () => new Player(
 				this.scene.input,
 				this.scene.cameras.main,
@@ -137,6 +137,7 @@ class Robot {
 	destroy() {
 		this.sprite.destroy();
 		this.hitSprite.destroy();
+		this.health.destroy();
 		this.weapon.destroy();
 		this.controller.destroy();
 		this.destroyed = true;
