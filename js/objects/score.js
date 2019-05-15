@@ -18,8 +18,8 @@ class Score {
 			this.currentLevel += 1;
 			this.currentSpawn = 0;
 			this.levelCallback(this.currentLevel, this.levels[this.currentLevel].robot);
-			this.spawn = this.levels[this.currentLevel].level;
-			this.level = this.levels[this.currentLevel].spawns[0];
+			this.level = this.levels[this.currentLevel].level;
+			this.spawn = this.levels[this.currentLevel].spawns[0];
 		}
 		if (this.spawn >= 0) {
 			this.spawn -= 1;
