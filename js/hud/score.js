@@ -92,10 +92,10 @@ class Score {
 	win(time) {
 		if (!this.title) {
 			let seconds = time / 1000;
-			let title = this.createText(400, 300, "You Win!", 32, 'white');
+			this.title = this.createText(400, 300, "You Win!", 32, 'white');
 			let subtitle = this.createText(400, 350, `You beat the game in ${seconds} seconds`, 28);
 			let restart = this.createText(400, 400, `Refresh Page to Try Again`, 24);
-			title.setOrigin(0.5, 0.5);
+			this.title.setOrigin(0.5, 0.5);
 			subtitle.setOrigin(0.5, 0.5);
 			restart.setOrigin(0.5, 0.5);
 		}
