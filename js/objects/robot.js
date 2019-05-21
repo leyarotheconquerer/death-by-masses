@@ -67,6 +67,7 @@ class Robot {
 		sprite.setName(name);
 		sprite.scaleX = config.scale.x;
 		sprite.scaleY = config.scale.y;
+		sprite.setTint(config.tint);
 		sprite.setCircle(
 			config.circle.radius,
 			config.circle.offset.x,
